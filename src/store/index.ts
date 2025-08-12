@@ -1,11 +1,7 @@
 import { createStore, combineReducers } from "redux";
 
 import { configureStore } from "@reduxjs/toolkit";
-
-// import { reducer as formReducer } from 'redux-form'
-
 import storage from 'redux-persist/lib/storage'
-
 import { persistStore, persistReducer } from 'redux-persist'
 
 import userFormSlice from "./user/form/slice";
@@ -37,13 +33,16 @@ const combinedReducers = combineReducers({
       : userReducer
 });
 
-
 export const store = configureStore({
   reducer: combinedReducers,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        immutableCheck: {
+          warnAfter: 50, // ms
+          trace: true,   // log call stack
+        }
       },
     }),
   devTools: process.env.NODE_ENV !== 'production', // optional

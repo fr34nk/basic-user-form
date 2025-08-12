@@ -1,13 +1,19 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import validate from "../helper/validationForm";
-import { user, userList } from "../types/user.type";
+import { user, userList, UserType } from "../types/user.type";
 
-/* Initial State */
-const initialState = {
+interface State {
+  step: number;
+  users: Partial<UserType>[];
+  data: Partial<UserType>;
+  errors: string[]; // or whatever type your errors are
+}
+
+const initialState: State = {
   step: 0,
   users: [],
-  data: user,
+  data: {},
   errors: []
 };
 
@@ -27,25 +33,30 @@ const formSlice = createSlice({
     },
     updateField: (state, action) => {
       const { field, value } = action.payload;
-
       (state as any).data[field] = value;
       return state;
     },
     validateForm: (state, action) => {
       const userData = action.payload;
       state.errors = validate(userData);
+      return state;
     },
-    addUser: (state, action) => {
+    addUser(state, action) {
       const userData = action.payload;
-      // @ts-ignore
-      state.users = [...state.users, user ]
+      state.users.push(userData);
+      return state;
     },
-
-    resetForm: () => initialState,
+    resetForm: (state) => {
+      const users = state.users;
+      return ({ 
+        ...initialState, 
+        users
+      })
+    },
   },
 });
 
-export const { setStep, nextStep, prevStep, updateField, resetForm } =
+export const { setStep, nextStep, prevStep, updateField, resetForm, addUser  } =
   formSlice.actions;
 
 

@@ -44,7 +44,6 @@ export const userReducer = (
           })
         ];
       }
-
       return {
         ...state,
         edit: initialState.edit,

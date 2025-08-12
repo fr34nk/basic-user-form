@@ -21,7 +21,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 
-
 import { setStep } from '../../store/user/form/slice';
 
 import { useDispatch, useSelector } from "react-redux";

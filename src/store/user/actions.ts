@@ -9,31 +9,31 @@ import {
 } from './types';
 import { UserType } from './types/user.type';
 
-export const addUser = (data: any) => ({
+export const addUserAction = (data: any) => ({
   type: ADD_USER,
   payload: data
 });
 
-export const resetUser = () => ({
+export const resetUserAction = () => ({
   type: RESET_USER,
 });
 
-export const getUser = () => ({
+export const getUserAction = () => ({
   type: GET_USER,
   // payload: data
 });
 
-export const deleteUser = (data: any) => ({
+export const deleteUserAction = (data: any) => ({
   type: DELETE_USER,
   payload: data
 });
 
-export const getUserById = (data: any) => ({
+export const getUserByIdAction = (data: any) => ({
   type: GET_USER_BY_ID,
   payload: data
 });
 
-export const appendUserToSession = (data: Partial<UserType>) => ({
+export const appendUserToSessionAction = (data: Partial<UserType>) => ({
   type: SESSION_APPEND_USER,
   payload: data as UserType
 });

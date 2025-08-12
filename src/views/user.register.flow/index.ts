@@ -1,16 +1,16 @@
 import { connect } from 'react-redux'
 import {
-  addUser, resetUser,
+  addUserAction, resetUserAction,
 } from '../../store/user/actions'
 import DEFAULT_SETTINGS from '../../store/user/settings';
 
 const mapDispatchToProps = (dispatch: any) => ({
   handleSubmits: (value: any) => {
-    dispatch(addUser(value))
+    dispatch(addUserAction(value))
     dispatch('user', DEFAULT_SETTINGS.edit)
   },
   handleCancel: () => {
-    dispatch(resetUser())
+    dispatch(resetUserAction())
     dispatch('user', DEFAULT_SETTINGS.edit)
   }
 })

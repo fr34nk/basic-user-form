@@ -25,7 +25,7 @@ import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { resetForm, updateField } from "../../store/user/form/slice";
-import { appendUserToSession } from "../../store/user/actions";
+import { addUser } from "../../store/user/form/slice";
 
 const steps = ["Infos Básicas", "Infos Profissionais"];
 
@@ -141,7 +141,7 @@ export function UserWorkInfo () {
               <Button
                 variant="contained"
                 onClickCapture={(e) => {
-                  dispatch(appendUserToSession(formData.data))
+                  dispatch(addUser(formData.data))
                   dispatch(resetForm())
                   navigate('/');
                 }}
