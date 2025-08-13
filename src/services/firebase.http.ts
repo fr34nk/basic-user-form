@@ -36,7 +36,7 @@ export class FirebaseHttpService {
             headers?: { [key:string]: string },
             params?: { [key:string]: string }
             body?: { [key:string]: any }, 
-    }) {
+    }, options?: { shouldLogRequest: boolean }) {
         try {
             // TODO: interpolate params
             const url = _url;
@@ -60,6 +60,10 @@ export class FirebaseHttpService {
             });
 
             const response = await fetch(request);
+
+            if (options?.shouldLogRequest) {
+                console.debug(request)
+            }
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,18 +102,26 @@ export class FirebaseHttpService {
         })
     }
 
-    async postCollection (collection: string, body: { [key:string]: any }) {
+    async findInCollectionBy (collection: string, by: { [key:string]: any }, options?: { shouldLogRequest: boolean }) {
+        //@ts-ignore
+        const where = Object.keys(by).reduce((acc, key) => {
+            let value = by[key];
+            if (typeof value == 'string') {
+                value = `"${value}"`
+            } 
+            acc+=`orderBy="${key}"&equalTo=${value}&`
+            return acc;
+        }, '').replace(/&$/, '')
+
         return this.request(
-            // `https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/${collection}`,
-            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}`,
+            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}&${where}`,
             {
-                method: 'POST',
+                method: 'GET',
                 headers: { 
                     "Content-Type": "application/json",
-                    // "Authorization": `BEARER ${this._idToken}`
-                },
-                body: body
-            })
+            }
+        }, options)
+
     }
 }
 
