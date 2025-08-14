@@ -41,13 +41,9 @@ export function UserList () {
   const state = useSelector((state: RootState) => state);
   const { users, loading, error } = (state as any).userForm;
 
-  const handleUserGet = async () => {
-    dispatch(getUserListAsync({}));
-  }
-
   useEffect(function () {
-    handleUserGet()
-  }, [])
+    dispatch(getUserListAsync({}));
+  }, [dispatch])
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
