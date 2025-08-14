@@ -1,3 +1,4 @@
+import { where } from 'firebase/firestore';
 import config from '../config/firebase.config'
 
 export class FirebaseHttpService {
@@ -32,7 +33,7 @@ export class FirebaseHttpService {
 
     async request (_url: string, 
         config: { 
-            method: 'GET'|'POST'|'UPDATE'|'DELETE', 
+            method: 'GET'|'POST'|'UPDATE'|'DELETE'|'PATCH', 
             headers?: { [key:string]: string },
             params?: { [key:string]: string }
             body?: { [key:string]: any }, 
@@ -102,19 +103,23 @@ export class FirebaseHttpService {
         })
     }
 
-    async findInCollectionBy (collection: string, by: { [key:string]: any }, options?: { shouldLogRequest: boolean }) {
+    createWhereFromParameters (params: { [key:string]: string }) {
         //@ts-ignore
-        const where = Object.keys(by).reduce((acc, key) => {
-            let value = by[key];
+        const where = Object.keys(params).reduce((acc, key) => {
+            let value = params[key];
             if (typeof value == 'string') {
                 value = `"${value}"`
             } 
             acc+=`orderBy="${key}"&equalTo=${value}&`
             return acc;
         }, '').replace(/&$/, '')
+        return where;
+    }
 
+    async findInCollectionBy (collection: string, by: { [key:string]: any }, options?: { shouldLogRequest: boolean }) {
+        const whereClause = this.createWhereFromParameters(by);
         return this.request(
-            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}&${where}`,
+            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}&${whereClause}`,
             {
                 method: 'GET',
                 headers: { 
@@ -123,6 +128,63 @@ export class FirebaseHttpService {
         }, options)
 
     }
+
+    async createCollection (collection: string) {
+        return this.request(
+            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}`,
+            {
+                method: 'POST',
+                headers: { 
+                    "Content-Type": "application/json",
+                },
+                body: {} as { [key:string]: any}
+            }
+        )
+    }
+
+    async addToCollection (collection: string, obj: { [key:string]: any }) {
+        return this.request(
+            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}`,
+            {
+                method: 'POST',
+                headers: { 
+                    "Content-Type": "application/json",
+                },
+            body: obj
+            }
+        )
+    }
+
+    async updateDocument (collection: string, obj: { [key:string]: any }, whereParams: { [key:string]: any }) {
+        const response = await this.findInCollectionBy(collection, whereParams);
+        let results = [] as any[];
+        return Promise.all(
+            Object.keys(response).map(async (key:string) => {
+                const result  = await this.request(
+                    `https://${this._projectId}.firebaseio.com/${collection}/${key}.json?auth=${this._apiKey}`,
+                    {
+                        method: 'PATCH',
+                        headers: { 
+                            "Content-Type": "application/json",
+                    },
+                    body: obj
+                })
+                return result;
+            })
+        )
+    }
+
+    async deleteDocument (collection: string) {
+        return this.request(
+            `https://${this._projectId}.firebaseio.com/${collection}.json?auth=${this._apiKey}`,
+            {
+                method: 'DELETE',
+                headers: { 
+                    "Content-Type": "application/json",
+                }
+        })
+    }
+
 }
 
 export function getFirebaseTransport () {
