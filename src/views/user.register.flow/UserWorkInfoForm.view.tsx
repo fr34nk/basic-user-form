@@ -27,6 +27,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetForm, updateField } from "../../store/user/form/slice";
 import { addUser } from "../../store/user/form/slice";
 
+import { useAppDispatch } from "../../store/user/form/thunks/user.async";
+import { addUserAsync } from "../../store/user/form/thunks/user.async";
+
+
 const steps = ["Infos Básicas", "Infos Profissionais"];
 
 export function UserWorkInfo () {
@@ -35,6 +39,8 @@ export function UserWorkInfo () {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dispatchAsync = useAppDispatch();
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
@@ -141,7 +147,8 @@ export function UserWorkInfo () {
               <Button
                 variant="contained"
                 onClickCapture={(e) => {
-                  dispatch(addUser(formData.data))
+                  // dispatch(addUser(formData.data))
+                  dispatchAsync(addUserAsync(formData.data))
                   dispatch(resetForm())
                   navigate('/');
                 }}

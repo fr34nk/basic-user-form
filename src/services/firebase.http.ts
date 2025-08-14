@@ -12,9 +12,9 @@ export class FirebaseHttpService {
     private _projectId: string;
 
     constructor () {
-        this._apiKey = config.apiKey;
-        this._appId = config.appId;
-        this._projectId = config.projectId;
+        this._apiKey = config.apiKey as string;
+        this._appId = config.appId as string;
+        this._projectId = config.projectId as string;
     }
 
     async getBearer () {
@@ -30,6 +30,14 @@ export class FirebaseHttpService {
             console.log(error);
         })
     }
+
+    parseCollectionResult (obj: { [key:string]: any }) {
+        const keys = [Object.keys(obj)];
+        return Object.keys(obj).map((key) => {
+            return obj[key];
+        })
+    }
+
 
     async request (_url: string, 
         config: { 

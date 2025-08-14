@@ -2,15 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 // import { auth, db } from '../../../../config/firebase';
 import { auth, db } from '../../../../config/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { Firestore, getFirestore } from 'firebase/firestore';
-import { collection, addDoc } from 'firebase/firestore';
 
 import { UserType } from '../../types/user.type';
 
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../..';
 import { firebaseHttpTransport } from '../../../../services/firebase.http';
-import { UNSAFE_shouldHydrateRouteLoader } from 'react-router';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -38,6 +35,19 @@ export const addUserAsync = createAsyncThunk(
       const collectionResult = await firebaseHttpTransport.getCollection('users');
 
       const parsedResult = firebaseHttpTransport.parseCollectionResult(collectionResult);
+      return parsedResult;
+    } catch (error) {
+      return rejectWithValue((error as any).message);
+    }
+  }
+)
+
+export const getUserListAsync = createAsyncThunk(
+  'user/getUserList',
+  async (userData: Partial<UserType>, { rejectWithValue }) => {
+    try {
+      const userList = await firebaseHttpTransport.getCollection('users');
+      const parsedResult = firebaseHttpTransport.parseCollectionResult(userList);
       return parsedResult;
     } catch (error) {
       return rejectWithValue((error as any).message);

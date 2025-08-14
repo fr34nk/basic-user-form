@@ -1,13 +1,9 @@
 
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import validate from "../helper/validationForm";
-import { user, userList, UserType } from "../types/user.type";
+import { UserType } from "../types/user.type";
 
-import { auth } from '../../../config/firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-
-import { loginUser, addUserAsync }  from './thunks/user.async';
-
+import { loginUser, addUserAsync, getUserListAsync }  from './thunks/user.async';
 
 
 interface State {
@@ -62,7 +58,6 @@ const formSlice = createSlice({
         users
       })
     },
-    
   },
   extraReducers: (builder) => {
     builder
@@ -87,6 +82,21 @@ const formSlice = createSlice({
         state.loading = false;
         state.error = true;
       })
+      .addCase(getUserListAsync.pending, (state: State) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserListAsync.fulfilled, (state: State, action) => {
+        state.users = [...action.payload];
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(getUserListAsync.rejected, (state: State) => {
+        state.loading = false;
+        state.error = true;
+      })
+
+ 
 
   }
 });

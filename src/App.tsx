@@ -5,7 +5,6 @@ import { UserList } from './views/user.register.flow/UserList.view';
  import { UserInfo } from './views/user.register.flow/UserInfoForm.view';
 import { UserWorkInfo  } from './views/user.register.flow/UserWorkInfoForm.view';
 
-
 export default function MyForm() {
   return (
     <div className="App">

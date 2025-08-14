@@ -21,19 +21,33 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
 
-import { setStep } from '../../store/user/form/slice';
+import translate from '../../config/translate.config';
 
-import { useDispatch, useSelector } from "react-redux";
+import { nextStep } from '../../store/user/form/slice';
+
+import { useSelector } from "react-redux";
 import { RootState } from '../../store/index'
+import { useEffect } from "react";
+import {  getUserListAsync } from "../../store/user/form/thunks/user.async";
 
+import { useAppDispatch } from "../../store/user/form/thunks/user.async";
 
 export function UserList () {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
   const state = useSelector((state: RootState) => state);
-  const userData = (state as any).userForm;
+  const { users, loading, error } = (state as any).userForm;
+
+  const handleUserGet = async () => {
+    dispatch(getUserListAsync({}));
+  }
+
+  useEffect(function () {
+    handleUserGet()
+  }, [])
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
@@ -88,7 +102,7 @@ export function UserList () {
           <Button
             variant="contained"
             onClick={() => { 
-              dispatch(setStep(1));
+              nextStep()
               navigate('/user-info')
             }}
             sx={{
@@ -98,7 +112,7 @@ export function UserList () {
               "&:hover": { backgroundColor: "#00B248" }
             }}
           >
-            Novo Colaborador
+            { translate.user.new_employee }
           </Button>
         </Box>
 
@@ -120,7 +134,7 @@ export function UserList () {
             </TableHead>
             <TableBody>
               {/*@ts-ignore*/}
-              {(userData.users||[]).map((user, idx) => (
+              {(users||[]).map((user, idx) => (
                 <TableRow key={idx}>
                   <TableCell>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
