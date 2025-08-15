@@ -15,7 +15,8 @@ import {
   TableHead,
   TableRow,
   Chip,
-  Paper
+  Paper,
+  TableSortLabel
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router";
@@ -27,10 +28,14 @@ import { nextStep } from '../../store/user/form/slice';
 
 import { useSelector } from "react-redux";
 import { RootState } from '../../store/index'
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {  getUserListAsync } from "../../store/user/form/thunks/user.async";
 
 import { useAppDispatch } from "../../store/user/form/thunks/user.async";
+import { firebaseHttpTransport } from "../../services/firebase.http";
+import { getRandomAvatar } from "../../../src/utils/avatar";
+import { TableComponent } from "./Table/Table.component";
+
 
 export function UserList () {
   const navigate = useNavigate();
@@ -61,9 +66,9 @@ export function UserList () {
         }}
       >
         <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
-          <img src="/logo.png" alt="Flugo" width={30} />
+          <img src="/logos/generic_logo.png" alt="Flugo" width={60} />
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Flugo
+            Brand 
           </Typography>
         </Box>
         <List>
@@ -89,9 +94,9 @@ export function UserList () {
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            Colaboradores
+            { translate.user.colaborators }
           </Typography>
-          <Avatar alt="User" src="/avatar.png" />
+          <Avatar alt="User" src={"avatars/avatar_female_01.png"}/>
         </Box>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
@@ -112,53 +117,19 @@ export function UserList () {
           </Button>
         </Box>
 
-        <TableContainer
+        {/* <EnhancedTable></EnhancedTable> */}
+        <TableComponent
+            as={TableContainer}
+            users={users}
           component={Paper}
+            
           sx={{
+              flex: 1,
             borderRadius: 3,
             boxShadow: "0 4px 20px rgba(0,0,0,0.05)"
           }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Nome</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Departamento</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/*@ts-ignore*/}
-              {(users||[]).map((user, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Avatar src={user.avatar} alt={user.firstName} />
-                      {user.firstName}
-                    </Box>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.department}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={user?.enabled ? 'Ativo' : 'Inativo'}
-                      sx={{
-                        backgroundColor:
-                          user?.enabled === true
-                            ? "rgba(0,200,83,0.1)"
-                            : "rgba(244,67,54,0.1)",
-                        color:
-                          user?.enabled === true ? "#00C853" : "#F44336",
-                        fontWeight: 600
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        ></TableComponent>
+
       </Box>
     </Box>
   );

@@ -9,14 +9,12 @@ import userFormSlice from "./user/form/slice";
 import {userReducer} from './user/user.reducer';
 import { authReducer } from "./auth/reducer";
 
-
 const FEAT_FLAG_PERSIST = true;
 
 const userPersistConfig = {
   key: 'root', // unique key for the persisted state
   storage, // storage engine to use (e.g., localStorage, sessionStorage)
   whitelist: ['user'], // array of reducer keys to persist (optional)
-  // blacklist: ['temporaryData'], // array of reducer keys to NOT persist (optional)
 };
 
 const authPersistConfig = {
