@@ -1,5 +1,4 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-// import { auth, db } from '../../../../config/firebase';
 import { auth, db } from '../../../../config/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 
@@ -14,7 +13,7 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 // Async thunk: login
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async ({ email, password }: { email:string, password: string }, { rejectWithValue }) => {
+  async ({ email, password }: { email: string, password: string }, { rejectWithValue }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return {
@@ -32,10 +31,9 @@ export const addUserAsync = createAsyncThunk(
   async (userData: Partial<UserType>, { rejectWithValue }) => {
     try {
       const recordId = await firebaseHttpTransport.addToCollection('users', userData);
-      const collectionResult = await firebaseHttpTransport.getCollection('users');
 
-      const parsedResult = firebaseHttpTransport.parseCollectionResult(collectionResult);
-      return parsedResult;
+      const userList = await firebaseHttpTransport.getCollectionParsed('users');
+      return userList;
     } catch (error) {
       return rejectWithValue((error as any).message);
     }
@@ -46,9 +44,8 @@ export const getUserListAsync = createAsyncThunk(
   'user/getUserList',
   async (userData: Partial<UserType>, { rejectWithValue }) => {
     try {
-      const userList = await firebaseHttpTransport.getCollection('users');
-      const parsedResult = firebaseHttpTransport.parseCollectionResult(userList);
-      return parsedResult;
+      const userList = await firebaseHttpTransport.getCollectionParsed('users');
+      return userList;
     } catch (error) {
       return rejectWithValue((error as any).message);
     }

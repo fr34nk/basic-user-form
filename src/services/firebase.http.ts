@@ -31,7 +31,7 @@ export class FirebaseHttpService {
         })
     }
 
-    parseCollectionResult (obj: { [key:string]: any }) {
+    private parseCollectionResult (obj: { [key:string]: any }) {
         const keys = [Object.keys(obj)];
         return Object.keys(obj).map((key) => {
             return obj[key];
@@ -107,8 +107,19 @@ export class FirebaseHttpService {
                 headers: { 
                     "Content-Type": "application/json",
                     // "Authorization": `BEARER ${this._idToken}`
+                }
             }
-        })
+        )
+    }
+
+    async getCollectionParsed (collection: string) {
+        try {
+            const userList = await firebaseHttpTransport.getCollection(collection);
+            const parsedResult = firebaseHttpTransport.parseCollectionResult(userList);
+            return parsedResult;
+        } catch (e) {
+            throw e;
+        }
     }
 
     createWhereFromParameters (params: { [key:string]: string }) {
@@ -192,6 +203,8 @@ export class FirebaseHttpService {
                 }
         })
     }
+
+
 
 }
 
